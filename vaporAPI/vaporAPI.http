@@ -1,0 +1,6 @@
+@vaporAPI_HostAddress = http://localhost:5030
+
+GET {{vaporAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
