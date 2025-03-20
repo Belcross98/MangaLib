@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using vaporAPI.Data;
 using vaporAPI.Dtos.Manga;
+using vaporAPI.Interfaces;
 using vaporAPI.Mappers;
 using vaporAPI.Models;
 
@@ -17,30 +18,31 @@ namespace vaporAPI.Controllers
     [ApiController]
     public class MangaController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IMangaRepository _mangaRepo;
 
-        public MangaController(ApplicationDbContext context)
+        public MangaController(IMangaRepository mangaRepo)
         {
-            _context = context;
+            _mangaRepo = mangaRepo;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllMangas()
         {
-            var mangas = await _context.Mangas.ToListAsync();
+            var mangas = await _mangaRepo.GetAllAsync();
             var mangasDto = mangas.Select(s => s.ToMangaDto());
-
             return Ok(mangasDto);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var manga = await _context.Mangas.FindAsync(id);
+            var manga = await _mangaRepo.GetByIdAsync(id);
+
             if (manga != null)
             {
                 return Ok(manga.ToMangaDto());
             }
+
             return NotFound();
         }
 
@@ -50,13 +52,9 @@ namespace vaporAPI.Controllers
             if (createMangaDto == null || string.IsNullOrEmpty(createMangaDto.Name))
                 return BadRequest("Manga Name is required field!");
 
-            var check = await _context.Mangas.FirstOrDefaultAsync(m => m.Name == createMangaDto.Name);
-            if (check != null)
-                return BadRequest("That manga already exists in our Database!");
-
             var mangaToBeAdded = createMangaDto.ToCreateMangaDto();
-            await _context.Mangas.AddAsync(mangaToBeAdded);
-            await _context.SaveChangesAsync();
+            var check = await _mangaRepo.CreateAsync(mangaToBeAdded);
+
 
             return CreatedAtAction(nameof(GetById), new { id = mangaToBeAdded.Id }, mangaToBeAdded);
         }
@@ -65,18 +63,13 @@ namespace vaporAPI.Controllers
         [Route("{id}")]
         public async Task<IActionResult> UpdateManga([FromBody] UpdateMangaDto updateMangaDto, [FromRoute] int id)
         {
-            var check = await _context.Mangas.FindAsync(id);
-
-            if (check == null)
-                return NotFound();
-
             if (string.IsNullOrEmpty(updateMangaDto.Name))
                 return BadRequest("You must enter new name for selected Manga!");
 
-            check.Name = updateMangaDto.Name;
-            check.Rating = updateMangaDto.Rating;
+            var check = await _mangaRepo.UpdateAsync(id, updateMangaDto);
 
-            await _context.SaveChangesAsync();
+            if (check == null)
+                return NotFound();
 
             return Ok(check.ToMangaDto());
 
@@ -86,13 +79,10 @@ namespace vaporAPI.Controllers
         [Route("{id}")]
         public async Task<IActionResult> RemoveManga([FromRoute] int id)
         {
-            var check = await _context.Mangas.FindAsync(id);
-            
+            var check = await _mangaRepo.DeleteAsync(id);
+
             if (check == null)
                 return NotFound();
-
-            _context.Mangas.Remove(check);
-            await _context.SaveChangesAsync();
 
             return NoContent();
 
