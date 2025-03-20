@@ -52,7 +52,7 @@ namespace vaporAPI.Controllers
             if (createMangaDto == null || string.IsNullOrEmpty(createMangaDto.Name))
                 return BadRequest("Manga Name is required field!");
 
-            var mangaToBeAdded = createMangaDto.ToCreateMangaDto();
+            var mangaToBeAdded = createMangaDto.ToCreateFromDto();
             var check = await _mangaRepo.CreateAsync(mangaToBeAdded);
 
 

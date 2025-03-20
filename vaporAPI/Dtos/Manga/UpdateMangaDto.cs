@@ -8,9 +8,12 @@ namespace vaporAPI.Dtos.Manga
 {
     public class UpdateMangaDto
     {
-        public required string Name { get; set; }
-        [Column(TypeName = "decimal(2,1)")]
-        public decimal? Rating { get; set; }
+    public required string Name { get; set; }
+    public string Description { get; set; } = string.Empty;
+    public string MangaPictureURL { get; set; }  = string.Empty;
+    [Column(TypeName ="decimal(2,1)")]
+    public decimal? AverageRating { get; set; }
+
 
     }
 }

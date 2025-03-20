@@ -14,14 +14,18 @@ namespace vaporAPI.Mappers
             return new MangaDto{
 
               Name = manga.Name,
-              Rating = manga.Rating  
+              Description = manga.Description,
+              MangaPictureURL = manga.MangaPictureURL,
+              AverageRating = manga.AverageRating 
 
             };
         }
 
-        public static Manga ToCreateMangaDto(this CreateMangaDto createMangaDto){
+        public static Manga ToCreateFromDto(this CreateMangaDto createMangaDto){
             return new Manga{
-                Name = createMangaDto.Name
+                Name = createMangaDto.Name,
+                Description = createMangaDto.Description,
+                MangaPictureURL = createMangaDto.MangaPictureURL
             };
         }
     }

@@ -13,6 +13,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>{
 }
 );
 builder.Services.AddScoped<IMangaRepository,MangaRepository>();
+builder.Services.AddScoped<IUserRepository,UserRepository>();
+builder.Services.AddScoped<IReviewRepository,ReviewRepository>();
 var app = builder.Build();
 
 

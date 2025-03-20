@@ -7,6 +7,8 @@ namespace vaporAPI.Dtos.Manga
 {
     public class CreateMangaDto
     {
-        public required string Name { get; set; }
+    public required string Name { get; set; }
+    public string Description { get; set; } = string.Empty;
+    public string MangaPictureURL { get; set; }  = string.Empty;
     }
 }

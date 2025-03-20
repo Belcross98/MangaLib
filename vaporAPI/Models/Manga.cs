@@ -8,10 +8,12 @@ public class Manga
     
     public int Id { get; set; }
     public required string Name { get; set; }
+    public string Description { get; set; } = string.Empty;
+    public string MangaPictureURL { get; set; }  = string.Empty;
     [Column(TypeName ="decimal(2,1)")]
-    public decimal? Rating { get; set; }
+    public decimal? AverageRating { get; set; }
     
-   
+    public List<Review> Reviews { get; set; } = new List<Review>();
 
 
 }

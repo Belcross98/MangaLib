@@ -61,7 +61,8 @@ namespace vaporAPI.Repository
                 return null;
 
             check.Name = mangaDto.Name;
-            check.Rating = mangaDto.Rating;
+            check.Description = mangaDto.Description;
+            check.MangaPictureURL = mangaDto.MangaPictureURL;
 
             await _context.SaveChangesAsync();
             return check;
