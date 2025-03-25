@@ -45,12 +45,12 @@ namespace vaporAPI.Repository
 
         public async Task<List<Manga>> GetAllAsync()
         {
-            return await _context.Mangas.ToListAsync();
+            return await _context.Mangas.Include(r => r.Reviews).ToListAsync();
         }
 
         public async Task<Manga?> GetByIdAsync(int id)
         {
-            return await _context.Mangas.FindAsync(id);
+            return await _context.Mangas.Include(r => r.Reviews).FirstOrDefaultAsync(m => m.Id == id); 
         }
 
         public async Task<Manga?> UpdateAsync(int id, UpdateMangaDto mangaDto)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using vaporAPI.Dtos.Review;
 
 namespace vaporAPI.Dtos.Manga
 {
@@ -14,6 +15,7 @@ namespace vaporAPI.Dtos.Manga
     public string MangaPictureURL { get; set; }  = string.Empty;
     [Column(TypeName ="decimal(2,1)")]
     public decimal? AverageRating { get; set; }
+    public List<ReviewDto>? Reviews { get; set; }
 
     }
 }

@@ -12,6 +12,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>{
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 }
 );
+builder.Services.AddControllers().AddNewtonsoftJson(options => {
+
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+
+});
 builder.Services.AddScoped<IMangaRepository,MangaRepository>();
 builder.Services.AddScoped<IUserRepository,UserRepository>();
 builder.Services.AddScoped<IReviewRepository,ReviewRepository>();

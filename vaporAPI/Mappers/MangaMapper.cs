@@ -13,10 +13,12 @@ namespace vaporAPI.Mappers
 
             return new MangaDto{
 
+              Id = manga.Id,
               Name = manga.Name,
               Description = manga.Description,
               MangaPictureURL = manga.MangaPictureURL,
-              AverageRating = manga.AverageRating 
+              AverageRating = manga.AverageRating,
+              Reviews = manga.Reviews.Select(m => m.ToReviewDto()).ToList() 
 
             };
         }

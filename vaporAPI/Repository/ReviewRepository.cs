@@ -19,9 +19,17 @@ namespace vaporAPI.Repository
             _context = dbContext;
         }
 
-        public Task<Review?> CreateAsync(Review review)
+        public async Task<Review?> CreateAsync(Review review)
         {
-            throw new NotImplementedException();
+
+            var check = await _context.Reviews.FirstOrDefaultAsync(r => r.MangaId == review.MangaId && r.UserId == review.UserId);
+
+            if (check != null)
+                return null;
+               
+            await _context.AddAsync(review);
+            await _context.SaveChangesAsync();
+            return review;
         }
 
         public Task<Review?> DeleteAsync(int id)
@@ -34,14 +42,22 @@ namespace vaporAPI.Repository
             return await _context.Reviews.ToListAsync();
         }
 
-        public Task<Review?> GetByIdAsync(int id)
+        public async Task<Review?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+           return await _context.Reviews.FindAsync(id);
         }
 
         public Task<Review?> UpdateAsync(int id, UpdateReviewDto updateReviewDto)
         {
             throw new NotImplementedException();
+        }
+        public async Task<Manga?> MangaExists(int id)
+        {
+            return await _context.Mangas.FindAsync(id);
+        }
+        public async Task<User?> UserExists(int id)
+        {
+            return await _context.Users.FindAsync(id);
         }
     }
 }
