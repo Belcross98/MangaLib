@@ -29,14 +29,22 @@ namespace vaporAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllMangas()
         {
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var mangas = await _mangaRepo.GetAllAsync();
             var mangasDto = mangas.Select(s => s.ToMangaDto());
             return Ok(mangasDto);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var manga = await _mangaRepo.GetByIdAsync(id);
 
             if (manga != null)
@@ -50,6 +58,10 @@ namespace vaporAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateManga([FromBody] CreateMangaDto createMangaDto)
         {
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             if (createMangaDto == null || string.IsNullOrEmpty(createMangaDto.Name))
                 return BadRequest("Manga Name is required field!");
 
@@ -61,9 +73,12 @@ namespace vaporAPI.Controllers
         }
 
         [HttpPut]
-        [Route("{id}")]
+        [Route("{id:int}")]
         public async Task<IActionResult> UpdateManga([FromBody] UpdateMangaDto updateMangaDto, [FromRoute] int id)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             if (string.IsNullOrEmpty(updateMangaDto.Name))
                 return BadRequest("You must enter new name for selected Manga!");
 
@@ -77,9 +92,12 @@ namespace vaporAPI.Controllers
         }
 
         [HttpDelete]
-        [Route("{id}")]
+        [Route("{id:int}")]
         public async Task<IActionResult> RemoveManga([FromRoute] int id)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var check = await _mangaRepo.DeleteAsync(id);
 
             if (check == null)

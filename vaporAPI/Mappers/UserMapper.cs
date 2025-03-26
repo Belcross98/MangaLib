@@ -9,9 +9,11 @@ namespace vaporAPI.Mappers
 {
     public static class UserMapper
     {
-        public static UserDto ToUserDto(this User user){
+        public static UserDto ToUserDto(this User user)
+        {
 
-            return new UserDto{
+            return new UserDto
+            {
                 Id = user.Id,
                 Username = user.Username,
                 Email = user.Email,

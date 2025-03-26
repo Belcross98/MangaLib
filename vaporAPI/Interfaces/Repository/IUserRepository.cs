@@ -12,7 +12,7 @@ namespace vaporAPI.Interfaces.Repository
         Task<List<User>> GetAllAsync();
         Task<User?> GetByIdAsync(int id);
         Task<User?> CreateAsync(User user);
-        Task<User?> UpdateAsync(int id,UpdateUserDto updateUserDto);
-        Task<User?> DeleteAsync(int id);        
+        Task<User?> UpdateAsync(int id, UpdateUserDto updateUserDto);
+        Task<User?> DeleteAsync(int id);
     }
 }

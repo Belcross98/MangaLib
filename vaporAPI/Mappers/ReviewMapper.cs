@@ -25,7 +25,7 @@ namespace vaporAPI.Mappers
             };
         }
 
-        public static Review ToCreateFromDto(this CreateReviewDto createReviewDto,User user,Manga manga)
+        public static Review ToCreateFromDto(this CreateReviewDto createReviewDto, User user, Manga manga)
         {
 
             return new Review

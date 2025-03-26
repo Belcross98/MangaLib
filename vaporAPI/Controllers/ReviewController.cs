@@ -1,15 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using vaporAPI.Dtos.Review;
-using vaporAPI.Interfaces;
 using vaporAPI.Interfaces.Repository;
 using vaporAPI.Mappers;
-using vaporAPI.Models;
-using vaporAPI.Repository;
+
 
 namespace vaporAPI.Controllers
 {
@@ -27,6 +20,8 @@ namespace vaporAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> getAllReviews()
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             var reviews = await _reviewRepo.GetAllAsync();
             var reviewsDto = reviews.Select(r => r.ToReviewDto());
@@ -35,9 +30,11 @@ namespace vaporAPI.Controllers
 
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> getById([FromRoute] int id)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             var check = await _reviewRepo.GetByIdAsync(id);
             if (check == null)
@@ -50,6 +47,8 @@ namespace vaporAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> createReview([FromBody] CreateReviewDto createReviewDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             var manga = await _reviewRepo.MangaExists(createReviewDto.MangaId);
             var user = await _reviewRepo.UserExists(createReviewDto.UserId);
@@ -78,9 +77,11 @@ namespace vaporAPI.Controllers
             return CreatedAtAction(nameof(getById), new { id = review.Id }, review.ToReviewDto());
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> updateReview([FromRoute] int id, [FromBody] UpdateReviewDto updateReviewDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             var update = await _reviewRepo.UpdateAsync(id, updateReviewDto);
 
@@ -89,18 +90,20 @@ namespace vaporAPI.Controllers
                 return NotFound();
             }
 
-            await _reviewRepo.UpdateAvgRating(update.MangaId);           
+            await _reviewRepo.UpdateAvgRating(update.MangaId);
             return Ok(update.ToReviewDto());
 
 
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> deleteReview([FromRoute] int id)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             var delete = await _reviewRepo.DeleteAsync(id);
-    
+
             if (delete == null)
             {
                 return NotFound();
