@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using vaporAPI.Dtos.Review;
 using vaporAPI.Interfaces;
+using vaporAPI.Interfaces.Repository;
 using vaporAPI.Mappers;
 using vaporAPI.Models;
 using vaporAPI.Repository;
@@ -17,59 +18,97 @@ namespace vaporAPI.Controllers
     public class ReviewController : ControllerBase
     {
         private readonly IReviewRepository _reviewRepo;
-        
+
         public ReviewController(IReviewRepository reviewRepository)
         {
             _reviewRepo = reviewRepository;
         }
 
         [HttpGet]
-        public async Task<IActionResult> getAllReviews(){
+        public async Task<IActionResult> getAllReviews()
+        {
 
             var reviews = await _reviewRepo.GetAllAsync();
             var reviewsDto = reviews.Select(r => r.ToReviewDto());
-            
+
             return Ok(reviewsDto);
 
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> getById([FromRoute] int id){
+        public async Task<IActionResult> getById([FromRoute] int id)
+        {
 
             var check = await _reviewRepo.GetByIdAsync(id);
-            if(check == null)
+            if (check == null)
                 return NotFound();
-            
+
             return Ok(check.ToReviewDto());
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> createReview([FromBody] CreateReviewDto createReviewDto){
+        public async Task<IActionResult> createReview([FromBody] CreateReviewDto createReviewDto)
+        {
 
             var manga = await _reviewRepo.MangaExists(createReviewDto.MangaId);
             var user = await _reviewRepo.UserExists(createReviewDto.UserId);
 
-            if(manga == null){
+            if (manga == null)
+            {
                 return BadRequest("Manga does not exist!");
             }
 
-            if(user == null){
+            if (user == null)
+            {
                 return BadRequest("User does not exist!");
-            } 
+            }
 
-            var review = createReviewDto.ToCreateFromDto(user,manga);
+            var review = await _reviewRepo.CreateAsync(createReviewDto.ToCreateFromDto(user, manga));
 
-            if(review == null){
+            if (review == null)
+            {
                 return BadRequest("Manga is already rated by user!");
             }
 
             await _reviewRepo.CreateAsync(review);
+            await _reviewRepo.UpdateAvgRating(review.MangaId);
 
 
-            return CreatedAtAction(nameof(getById),new {id = review.Id} ,review.ToReviewDto());
+            return CreatedAtAction(nameof(getById), new { id = review.Id }, review.ToReviewDto());
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> updateReview([FromRoute] int id, [FromBody] UpdateReviewDto updateReviewDto)
+        {
+
+            var update = await _reviewRepo.UpdateAsync(id, updateReviewDto);
+
+            if (update == null)
+            {
+                return NotFound();
+            }
+
+            await _reviewRepo.UpdateAvgRating(update.MangaId);           
+            return Ok(update.ToReviewDto());
+
+
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> deleteReview([FromRoute] int id)
+        {
+
+            var delete = await _reviewRepo.DeleteAsync(id);
+    
+            if (delete == null)
+            {
+                return NotFound();
+            }
+            await _reviewRepo.UpdateAvgRating(delete.MangaId);
+            return NoContent();
+
+        }
 
     }
 }

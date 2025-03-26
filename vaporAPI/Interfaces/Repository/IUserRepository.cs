@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using vaporAPI.Dtos.User;
 using vaporAPI.Models;
 
-namespace vaporAPI.Interfaces
+namespace vaporAPI.Interfaces.Repository
 {
     public interface IUserRepository
     {

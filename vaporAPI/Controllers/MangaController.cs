@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using vaporAPI.Data;
 using vaporAPI.Dtos.Manga;
 using vaporAPI.Interfaces;
+using vaporAPI.Interfaces.Repository;
 using vaporAPI.Mappers;
 using vaporAPI.Models;
 

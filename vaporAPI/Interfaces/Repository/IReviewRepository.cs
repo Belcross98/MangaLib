@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using vaporAPI.Dtos.Review;
 using vaporAPI.Models;
 
-namespace vaporAPI.Interfaces
+namespace vaporAPI.Interfaces.Repository
 {
     public interface IReviewRepository
     {
@@ -16,5 +16,6 @@ namespace vaporAPI.Interfaces
         Task<Review?> DeleteAsync(int id);
         Task<Manga?> MangaExists(int id);
         Task<User?> UserExists(int id);       
+        Task UpdateAvgRating(int mangaId);
     }
 }

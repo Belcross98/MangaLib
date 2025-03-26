@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using vaporAPI.Interfaces;
+using vaporAPI.Interfaces.Repository;
 using vaporAPI.Repository;
 
 namespace vaporAPI.Controllers

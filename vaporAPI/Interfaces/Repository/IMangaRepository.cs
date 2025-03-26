@@ -6,14 +6,14 @@ using Microsoft.EntityFrameworkCore.Update.Internal;
 using vaporAPI.Dtos.Manga;
 using vaporAPI.Models;
 
-namespace vaporAPI.Interfaces
+namespace vaporAPI.Interfaces.Repository
 {
     public interface IMangaRepository
     {
         Task<List<Manga>> GetAllAsync();
         Task<Manga?> GetByIdAsync(int id);
         Task<Manga?> CreateAsync(Manga manga);
-        Task<Manga?> UpdateAsync(int id,UpdateMangaDto mangaDto);
+        Task<Manga?> UpdateAsync(int id, UpdateMangaDto? mangaDto);
         Task<Manga?> DeleteAsync(int id);
 
     }

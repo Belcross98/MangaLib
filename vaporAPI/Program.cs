@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using vaporAPI.Data;
-using vaporAPI.Interfaces;
+using vaporAPI.Interfaces.Repository;
 using vaporAPI.Repository;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -36,7 +36,8 @@ namespace vaporAPI.Mappers
                 Rating = createReviewDto.Rating,
                 Comment = createReviewDto.Comment,
                 User = user,
-                Manga = manga
+                Manga = manga,
+                CreatedAt = DateTime.UtcNow
 
             };
         }

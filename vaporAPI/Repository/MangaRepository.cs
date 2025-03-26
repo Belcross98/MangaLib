@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using vaporAPI.Data;
 using vaporAPI.Dtos.Manga;
-using vaporAPI.Interfaces;
+using vaporAPI.Interfaces.Repository;
 using vaporAPI.Models;
 
 namespace vaporAPI.Repository
@@ -25,7 +25,7 @@ namespace vaporAPI.Repository
 
             if (check != null)
                 return null;
-               
+
             await _context.AddAsync(manga);
             await _context.SaveChangesAsync();
             return manga;
@@ -50,19 +50,22 @@ namespace vaporAPI.Repository
 
         public async Task<Manga?> GetByIdAsync(int id)
         {
-            return await _context.Mangas.Include(r => r.Reviews).FirstOrDefaultAsync(m => m.Id == id); 
+            return await _context.Mangas.Include(r => r.Reviews).FirstOrDefaultAsync(m => m.Id == id);
         }
-
-        public async Task<Manga?> UpdateAsync(int id, UpdateMangaDto mangaDto)
+        public async Task<Manga?> UpdateAsync(int id, UpdateMangaDto? mangaDto)
         {
             var check = await _context.Mangas.FindAsync(id);
 
             if (check == null)
                 return null;
 
-            check.Name = mangaDto.Name;
-            check.Description = mangaDto.Description;
-            check.MangaPictureURL = mangaDto.MangaPictureURL;
+            if (mangaDto != null)
+            {
+                check.Name = mangaDto.Name;
+                check.Description = mangaDto.Description;
+                check.MangaPictureURL = mangaDto.MangaPictureURL;
+            }
+
 
             await _context.SaveChangesAsync();
             return check;

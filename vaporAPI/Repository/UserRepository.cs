@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using vaporAPI.Data;
 using vaporAPI.Dtos.User;
-using vaporAPI.Interfaces;
+using vaporAPI.Interfaces.Repository;
 using vaporAPI.Models;
 
 namespace vaporAPI.Repository
