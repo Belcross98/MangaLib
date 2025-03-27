@@ -63,7 +63,9 @@ namespace vaporAPI.Repository
 
             }
 
-            return await mangas.ToListAsync();
+            var skipNumber = (queryObject.PageNumber - 1) * queryObject.PageSize;
+
+            return await mangas.Skip(skipNumber).Take(queryObject.PageSize).ToListAsync();
         }
 
         public async Task<Manga?> GetByIdAsync(int id)

@@ -74,7 +74,7 @@ namespace vaporAPI.Repository
         {
             return await _context.Mangas.FindAsync(id);
         }
-        public async Task<User?> UserExists(int id)
+        public async Task<User?> UserExists(string id)
         {
             return await _context.Users.FindAsync(id);
         }

@@ -9,7 +9,7 @@ namespace vaporAPI.Dtos.Review
     public class CreateReviewDto
     {
         [Required]
-        public int UserId { get; set; }
+        public required string UserId { get; set; }
         [Required]
         public int MangaId { get; set; }
         [Required]

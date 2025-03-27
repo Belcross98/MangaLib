@@ -15,7 +15,7 @@ namespace vaporAPI.Interfaces.Repository
         Task<Review?> UpdateAsync(int id, UpdateReviewDto updateReviewDto);
         Task<Review?> DeleteAsync(int id);
         Task<Manga?> MangaExists(int id);
-        Task<User?> UserExists(int id);
+        Task<User?> UserExists(string id);
         Task UpdateAvgRating(int mangaId);
     }
 }

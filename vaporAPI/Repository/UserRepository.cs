@@ -23,7 +23,7 @@ namespace vaporAPI.Repository
 
         public async Task<User?> CreateAsync(User user)
         {
-            var check = await _context.Users.FirstOrDefaultAsync(m => m.Username == user.Username);
+            var check = await _context.Users.FirstOrDefaultAsync(m => m.UserName == user.UserName);
 
             if (check != null)
                 return null;
