@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using vaporAPI.Data;
 using vaporAPI.Dtos.Manga;
+using vaporAPI.Helpers;
 using vaporAPI.Interfaces;
 using vaporAPI.Interfaces.Repository;
 using vaporAPI.Mappers;
@@ -27,13 +28,13 @@ namespace vaporAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllMangas()
+        public async Task<IActionResult> GetAllMangas([FromQuery] QueryObject queryObject)
         {
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var mangas = await _mangaRepo.GetAllAsync();
+            var mangas = await _mangaRepo.GetAllAsync(queryObject);
             var mangasDto = mangas.Select(s => s.ToMangaDto());
             return Ok(mangasDto);
         }

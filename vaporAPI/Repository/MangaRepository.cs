@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using vaporAPI.Data;
 using vaporAPI.Dtos.Manga;
+using vaporAPI.Helpers;
 using vaporAPI.Interfaces.Repository;
 using vaporAPI.Models;
 
@@ -43,9 +44,26 @@ namespace vaporAPI.Repository
             return toBeDeleted;
         }
 
-        public async Task<List<Manga>> GetAllAsync()
+        public async Task<List<Manga>> GetAllAsync(QueryObject queryObject)
         {
-            return await _context.Mangas.Include(r => r.Reviews).ToListAsync();
+            var mangas = _context.Mangas.Include(r => r.Reviews).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(queryObject.MangaName))
+            {
+                mangas = mangas.Where(m => m.Name.Contains(queryObject.MangaName));
+            }
+            if (!string.IsNullOrWhiteSpace(queryObject.SortBy))
+            {
+
+                if (queryObject.SortBy.Equals("MangaName", StringComparison.OrdinalIgnoreCase))
+                {
+
+                    mangas = queryObject.IsDescending ? mangas.OrderByDescending(m => m.Name) : mangas.OrderBy(m => m.Name);
+                }
+
+            }
+
+            return await mangas.ToListAsync();
         }
 
         public async Task<Manga?> GetByIdAsync(int id)
