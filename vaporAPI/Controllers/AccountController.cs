@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using vaporAPI.Dtos.Account;
+using vaporAPI.Dtos.User;
+using vaporAPI.Interfaces.Service;
 using vaporAPI.Models;
 
 
@@ -11,9 +13,11 @@ namespace vaporAPI.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<User> _userMangager;
-        public AccountController(UserManager<User> userManager)
+        private readonly ITokenService _tokenService;
+        public AccountController(UserManager<User> userManager, ITokenService tokenService)
         {
             _userMangager = userManager;
+            _tokenService = tokenService;
         }
 
         [HttpPost("register")]
@@ -41,7 +45,17 @@ namespace vaporAPI.Controllers
 
                     if (roleResult.Succeeded)
                     {
-                        return Ok("User created");
+                        return Ok(
+                            new NewUserDto
+                            {
+                                Username = user.UserName,
+                                Email = user.Email,
+                                Tokens = _tokenService.CreateToken(user)
+
+
+                            }
+
+                        );
                     }
                     else
                     {

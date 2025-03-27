@@ -7,8 +7,10 @@ using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using vaporAPI.Data;
 using vaporAPI.Interfaces.Repository;
+using vaporAPI.Interfaces.Service;
 using vaporAPI.Models;
 using vaporAPI.Repository;
+using vaporAPI.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,9 +66,12 @@ builder.Services.AddAuthentication(options =>
     };
 
 });
+
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IMangaRepository, MangaRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+
 var app = builder.Build();
 
 
