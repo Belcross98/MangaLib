@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using vaporAPI.Dtos.Review;
 using vaporAPI.Interfaces.Repository;
@@ -43,7 +44,7 @@ namespace vaporAPI.Controllers
             return Ok(check.ToReviewDto());
         }
 
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> createReview([FromBody] CreateReviewDto createReviewDto)
         {
@@ -76,7 +77,7 @@ namespace vaporAPI.Controllers
 
             return CreatedAtAction(nameof(getById), new { id = review.Id }, review.ToReviewDto());
         }
-
+        [Authorize]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> updateReview([FromRoute] int id, [FromBody] UpdateReviewDto updateReviewDto)
         {
@@ -95,7 +96,7 @@ namespace vaporAPI.Controllers
 
 
         }
-
+        [Authorize]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> deleteReview([FromRoute] int id)
         {

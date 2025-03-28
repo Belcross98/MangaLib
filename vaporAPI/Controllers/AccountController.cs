@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using vaporAPI.Dtos.Account;
-using vaporAPI.Dtos.User;
 using vaporAPI.Interfaces.Service;
 using vaporAPI.Models;
 

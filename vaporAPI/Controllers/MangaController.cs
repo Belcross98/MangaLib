@@ -29,7 +29,6 @@ namespace vaporAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetAllMangas([FromQuery] QueryObject queryObject)
         {
 
@@ -58,6 +57,7 @@ namespace vaporAPI.Controllers
             return NotFound();
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateManga([FromBody] CreateMangaDto createMangaDto)
         {
@@ -75,6 +75,7 @@ namespace vaporAPI.Controllers
             return CreatedAtAction(nameof(GetById), new { id = mangaToBeAdded.Id }, mangaToBeAdded);
         }
 
+        [Authorize]
         [HttpPut]
         [Route("{id:int}")]
         public async Task<IActionResult> UpdateManga([FromBody] UpdateMangaDto updateMangaDto, [FromRoute] int id)
@@ -94,6 +95,7 @@ namespace vaporAPI.Controllers
 
         }
 
+        [Authorize]
         [HttpDelete]
         [Route("{id:int}")]
         public async Task<IActionResult> RemoveManga([FromRoute] int id)

@@ -20,7 +20,7 @@ namespace vaporAPI.Mappers
                 MangaId = review.MangaId,
                 Rating = review.Rating,
                 Comment = review.Comment,
-                CreatedAt = review.CreatedAt
+                CreatedAt = review.CreatedAt,
 
             };
         }

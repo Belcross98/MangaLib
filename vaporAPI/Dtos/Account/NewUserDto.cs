@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace vaporAPI.Dtos.Account
 {
     public class NewUserDto
     {
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string Tokens { get; set; }
+        public required string Username { get; set; }
+        public required string Email { get; set; }
+        public required string Tokens { get; set; }
     }
 }
