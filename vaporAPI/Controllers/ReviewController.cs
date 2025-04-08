@@ -1,8 +1,11 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using vaporAPI.Dtos.Review;
 using vaporAPI.Interfaces.Repository;
 using vaporAPI.Mappers;
+using vaporAPI.Models;
 
 
 namespace vaporAPI.Controllers
@@ -52,19 +55,22 @@ namespace vaporAPI.Controllers
                 return BadRequest(ModelState);
 
             var manga = await _reviewRepo.MangaExists(createReviewDto.MangaId);
-            var user = await _reviewRepo.UserExists(createReviewDto.UserId);
 
             if (manga == null)
             {
                 return BadRequest("Manga does not exist!");
             }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (user == null)
+            Console.WriteLine("Claim ID IS : " + userId);
+
+
+            if (userId == null)
             {
                 return BadRequest("User does not exist!");
             }
 
-            var review = await _reviewRepo.CreateAsync(createReviewDto.ToCreateFromDto(user, manga));
+            var review = await _reviewRepo.CreateAsync(createReviewDto.ToCreateFromDto(userId, manga));
 
             if (review == null)
             {

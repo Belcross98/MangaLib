@@ -12,6 +12,7 @@ namespace vaporAPI.Models
         public string UserInformation { get; set; } = string.Empty;
         public string UserProfilePictureURL { get; set; } = string.Empty;
         public List<Review> Reviews { get; set; } = new List<Review>();
+        public RefreshToken? refreshToken { get; set; }
 
     }
 }

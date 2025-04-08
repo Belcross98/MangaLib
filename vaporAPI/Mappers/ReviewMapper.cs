@@ -25,17 +25,16 @@ namespace vaporAPI.Mappers
             };
         }
 
-        public static Review ToCreateFromDto(this CreateReviewDto createReviewDto, User user, Manga manga)
+        public static Review ToCreateFromDto(this CreateReviewDto createReviewDto, string userId, Manga manga)
         {
 
             return new Review
             {
 
-                UserId = createReviewDto.UserId,
+                UserId = userId,
                 MangaId = createReviewDto.MangaId,
                 Rating = createReviewDto.Rating,
                 Comment = createReviewDto.Comment,
-                User = user,
                 Manga = manga,
                 CreatedAt = DateTime.UtcNow
 

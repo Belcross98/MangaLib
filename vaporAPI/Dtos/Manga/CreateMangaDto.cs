@@ -9,9 +9,9 @@ namespace vaporAPI.Dtos.Manga
     public class CreateMangaDto
     {
         [Required]
-        [MaxLength(100, ErrorMessage = "Manga name can't be longer than 100 characters")]
+        [MaxLength(200, ErrorMessage = "Manga name can't be longer than 200 characters")]
         public required string Name { get; set; }
-        [MaxLength(250, ErrorMessage = "Description can't be longer than 250 characters")]
+        [MaxLength(500, ErrorMessage = "Description can't be longer than 500 characters")]
         public string Description { get; set; } = string.Empty;
         public string MangaPictureURL { get; set; } = string.Empty;
     }

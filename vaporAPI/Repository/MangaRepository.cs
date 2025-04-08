@@ -81,9 +81,9 @@ namespace vaporAPI.Repository
 
             if (mangaDto != null)
             {
-                check.Name = mangaDto.Name;
-                check.Description = mangaDto.Description;
-                check.MangaPictureURL = mangaDto.MangaPictureURL;
+                check.Name = string.IsNullOrEmpty(mangaDto.Name) ? check.Name : mangaDto.Name;
+                check.Description = string.IsNullOrEmpty(mangaDto.Description) ? check.Description : mangaDto.Description;
+                check.MangaPictureURL = string.IsNullOrEmpty(mangaDto.MangaPictureURL) ? check.MangaPictureURL : mangaDto.MangaPictureURL; ;
             }
 
 

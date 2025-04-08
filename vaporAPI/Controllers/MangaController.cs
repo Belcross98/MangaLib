@@ -57,7 +57,7 @@ namespace vaporAPI.Controllers
             return NotFound();
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateManga([FromBody] CreateMangaDto createMangaDto)
         {
@@ -75,16 +75,12 @@ namespace vaporAPI.Controllers
             return CreatedAtAction(nameof(GetById), new { id = mangaToBeAdded.Id }, mangaToBeAdded);
         }
 
-        [Authorize]
         [HttpPut]
         [Route("{id:int}")]
         public async Task<IActionResult> UpdateManga([FromBody] UpdateMangaDto updateMangaDto, [FromRoute] int id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            if (string.IsNullOrEmpty(updateMangaDto.Name))
-                return BadRequest("You must enter new name for selected Manga!");
 
             var check = await _mangaRepo.UpdateAsync(id, updateMangaDto);
 
@@ -95,7 +91,7 @@ namespace vaporAPI.Controllers
 
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpDelete]
         [Route("{id:int}")]
         public async Task<IActionResult> RemoveManga([FromRoute] int id)

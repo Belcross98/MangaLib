@@ -65,6 +65,19 @@ builder.Services.AddAuthentication(options =>
 
 });
 
+var MyAllowSpecificOrigins = "FrontEnd";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:5173");
+                          policy.WithHeaders("Content-Type");
+                          policy.AllowAnyMethod();
+                      });
+});
+
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IMangaRepository, MangaRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
@@ -77,6 +90,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
+app.UseCors(MyAllowSpecificOrigins);
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

@@ -14,8 +14,8 @@ namespace vaporAPI.Models
         public string Comment { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
 
-        public required User User { get; set; }
-        public required Manga Manga { get; set; }
+        public User? User { get; set; }
+        public Manga? Manga { get; set; }
 
     }
 }
