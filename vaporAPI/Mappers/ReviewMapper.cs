@@ -21,6 +21,7 @@ namespace vaporAPI.Mappers
                 Rating = review.Rating,
                 Comment = review.Comment,
                 CreatedAt = review.CreatedAt,
+                CreatedBy = review.User?.UserName ?? "Unknown",
 
             };
         }
@@ -37,6 +38,7 @@ namespace vaporAPI.Mappers
                 Comment = createReviewDto.Comment,
                 Manga = manga,
                 CreatedAt = DateTime.UtcNow
+
 
             };
         }

@@ -62,7 +62,6 @@ namespace vaporAPI.Controllers
             }
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            Console.WriteLine("Claim ID IS : " + userId);
 
 
             if (userId == null)

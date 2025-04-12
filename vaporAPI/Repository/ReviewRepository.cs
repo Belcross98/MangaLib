@@ -23,10 +23,12 @@ namespace vaporAPI.Repository
         {
 
             var check = await _context.Reviews.FirstOrDefaultAsync(r => r.MangaId == review.MangaId && r.UserId == review.UserId);
+            var user = await _context.Users.FindAsync(review.UserId);
 
             if (check != null)
                 return null;
 
+            review.User = user;
             await _context.AddAsync(review);
             await _context.SaveChangesAsync();
             return review;
@@ -53,7 +55,7 @@ namespace vaporAPI.Repository
 
         public async Task<Review?> GetByIdAsync(int id)
         {
-            return await _context.Reviews.FindAsync(id);
+            return await _context.Reviews.Include(r => r.User).FirstOrDefaultAsync(r => r.Id == id);
         }
 
         public async Task<Review?> UpdateAsync(int id, UpdateReviewDto updateReviewDto)

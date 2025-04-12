@@ -70,7 +70,7 @@ namespace vaporAPI.Repository
 
         public async Task<Manga?> GetByIdAsync(int id)
         {
-            return await _context.Mangas.Include(r => r.Reviews).FirstOrDefaultAsync(m => m.Id == id);
+            return await _context.Mangas.Include(r => r.Reviews).ThenInclude(r => r.User).FirstOrDefaultAsync(m => m.Id == id);
         }
         public async Task<Manga?> UpdateAsync(int id, UpdateMangaDto? mangaDto)
         {

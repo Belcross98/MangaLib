@@ -12,6 +12,8 @@ using vaporAPI.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.UseUrls("http://0.0.0.0:5030");
+
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -73,7 +75,7 @@ builder.Services.AddCors(options =>
                       policy =>
                       {
                           policy.WithOrigins("http://localhost:5173");
-                          policy.WithHeaders("Content-Type");
+                          policy.WithHeaders("Content-Type", "Authorization");
                           policy.AllowAnyMethod();
                       });
 });
@@ -81,6 +83,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IMangaRepository, MangaRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+
 
 var app = builder.Build();
 

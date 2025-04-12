@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using vaporAPI.Dtos.Account;
+using vaporAPI.Helpers;
 using vaporAPI.Interfaces.Service;
 using vaporAPI.Models;
 
@@ -32,14 +33,22 @@ namespace vaporAPI.Controllers
 
             if (user == null)
             {
-                return Unauthorized("Invalid username");
+                return Unauthorized(new ResponseType
+                {
+                    Errors = new() { "User not found" },
+                    Success = false,
+                });
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
             if (!result.Succeeded)
             {
-                return Unauthorized("Username not found / password incorrect");
+                return Unauthorized(new ResponseType
+                {
+                    Errors = new() { "Invalid password" },
+                    Success = false,
+                });
 
             }
 
