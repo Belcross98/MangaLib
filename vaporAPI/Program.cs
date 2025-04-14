@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using vaporAPI.Data;
+using vaporAPI.Helpers;
 using vaporAPI.Interfaces.Repository;
 using vaporAPI.Interfaces.Service;
 using vaporAPI.Models;
@@ -12,7 +15,7 @@ using vaporAPI.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls("http://0.0.0.0:5030");
+
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
@@ -65,6 +68,20 @@ builder.Services.AddAuthentication(options =>
 
     };
 
+});
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState.Values
+            .SelectMany(v => v.Errors)
+            .Select(e => e.ErrorMessage)
+            .ToList();
+
+        var result = new BadRequestObjectResult(new ApiResponse<Object>(null, false, errors.First()));
+
+        return result;
+    };
 });
 
 var MyAllowSpecificOrigins = "FrontEnd";

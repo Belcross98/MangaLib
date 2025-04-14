@@ -1,19 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using vaporAPI.Data;
 using vaporAPI.Dtos.Manga;
 using vaporAPI.Helpers;
-using vaporAPI.Interfaces;
 using vaporAPI.Interfaces.Repository;
 using vaporAPI.Mappers;
-using vaporAPI.Models;
 
 namespace vaporAPI.Controllers
 {
@@ -31,63 +20,50 @@ namespace vaporAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllMangas([FromQuery] QueryObject queryObject)
         {
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var mangas = await _mangaRepo.GetAllAsync(queryObject);
             var mangasDto = mangas.Select(s => s.ToMangaDto());
-            return Ok(mangasDto);
+            return Ok(new ApiResponse<IEnumerable<MangaDto>>(mangasDto, true, "Retrieved all mangas"));
         }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var manga = await _mangaRepo.GetByIdAsync(id);
 
             if (manga != null)
             {
-                return Ok(manga.ToMangaDto());
+                return Ok(new ApiResponse<MangaDto>(manga.ToMangaDto(), true, "Manga found"));
             }
 
-            return NotFound();
+            return StatusCode(404, new ApiResponse<int>(id, false, "Manga with the given id does not exist"));
         }
 
         //[Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateManga([FromBody] CreateMangaDto createMangaDto)
         {
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             if (createMangaDto == null || string.IsNullOrEmpty(createMangaDto.Name))
-                return BadRequest("Manga Name is required field!");
+                return BadRequest(new ApiResponse<CreateMangaDto>(createMangaDto, false, "Manga Name is required field"));
 
             var mangaToBeAdded = createMangaDto.ToCreateFromDto();
             var check = await _mangaRepo.CreateAsync(mangaToBeAdded);
 
+            if (check == null)
+                return BadRequest(new ApiResponse<CreateMangaDto>(createMangaDto, false, "Manga with that name already exists"));
 
-            return CreatedAtAction(nameof(GetById), new { id = mangaToBeAdded.Id }, mangaToBeAdded);
+            return StatusCode(201, new ApiResponse<CreateMangaDto>(createMangaDto, true, "Manga successfully created"));
         }
 
         [HttpPut]
         [Route("{id:int}")]
         public async Task<IActionResult> UpdateManga([FromBody] UpdateMangaDto updateMangaDto, [FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var check = await _mangaRepo.UpdateAsync(id, updateMangaDto);
 
             if (check == null)
-                return NotFound();
+                return NotFound(new ApiResponse<int>(id, false, "Manga with the given id does not exist"));
 
-            return Ok(check.ToMangaDto());
+            return Ok(new ApiResponse<MangaDto>(check.ToMangaDto(), true, "Manga successfully updated"));
 
         }
 
@@ -96,16 +72,12 @@ namespace vaporAPI.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> RemoveManga([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var check = await _mangaRepo.DeleteAsync(id);
 
             if (check == null)
-                return NotFound();
+                return NotFound(new ApiResponse<int>(id, false, "Manga with the given id does not exist"));
 
-            return NoContent();
-
+            return StatusCode(204, new ApiResponse<MangaDto>(check.ToMangaDto(), true, "Manga successfully deleted"));
         }
 
     }

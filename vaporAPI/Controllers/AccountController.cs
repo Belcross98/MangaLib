@@ -22,67 +22,41 @@ namespace vaporAPI.Controllers
             _tokenService = tokenService;
             _signInManager = signInManager;
         }
-
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var user = await _userMangager.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
 
             if (user == null)
             {
-                return Unauthorized(new ResponseType
-                {
-                    Errors = new() { "User not found" },
-                    Success = false,
-                });
+                return Unauthorized(new ApiResponse<LoginDto>(loginDto, false, "Invalid username"));
             }
-
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
             if (!result.Succeeded)
             {
-                return Unauthorized(new ResponseType
-                {
-                    Errors = new() { "Invalid password" },
-                    Success = false,
-                });
-
+                return Unauthorized(new ApiResponse<LoginDto>(loginDto, false, "Invalid password"));
             }
-
             return Ok(
-
-                new NewUserDto
+                new ApiResponse<NewUserDto>(new NewUserDto
                 {
 
                     Username = user.UserName,
                     Email = user.Email,
                     Tokens = _tokenService.CreateToken(user)
-                }
+                }, true, "User logged in successfully")
             );
-
         }
-
-
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
-
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
-
                 var user = new User
                 {
                     UserName = registerDto.Username,
                     Email = registerDto.Email
                 };
-
                 var createdUser = await _userMangager.CreateAsync(user, registerDto.Password);
 
                 if (createdUser.Succeeded)
@@ -91,35 +65,33 @@ namespace vaporAPI.Controllers
 
                     if (roleResult.Succeeded)
                     {
-                        return Ok(
+                        return Ok(new ApiResponse<NewUserDto>(
                             new NewUserDto
                             {
                                 Username = user.UserName,
                                 Email = user.Email,
                                 Tokens = _tokenService.CreateToken(user)
 
-
-                            }
+                            }, true, "User registered successfully")
 
                         );
                     }
                     else
                     {
-                        return StatusCode(500, roleResult.Errors);
+                        string error = roleResult.Errors.Select(e => e.Description).First();
+                        return StatusCode(500, new ApiResponse<RegisterDto>(registerDto, false, error));
                     }
                 }
                 else
                 {
-                    return StatusCode(500, createdUser.Errors);
+                    string error = createdUser.Errors.Select(e => e.Description).First();
+                    return StatusCode(500, new ApiResponse<RegisterDto>(registerDto, false, error));
                 }
-
             }
             catch (Exception e)
             {
-
-                return StatusCode(500, e);
+                return StatusCode(500, new ApiResponse<Exception>(e, false, e.Message));
             }
-
         }
     }
 }

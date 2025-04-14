@@ -1,11 +1,11 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using vaporAPI.Dtos.Review;
+using vaporAPI.Helpers;
 using vaporAPI.Interfaces.Repository;
 using vaporAPI.Mappers;
-using vaporAPI.Models;
+
 
 
 namespace vaporAPI.Controllers
@@ -24,80 +24,67 @@ namespace vaporAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> getAllReviews()
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var reviews = await _reviewRepo.GetAllAsync();
             var reviewsDto = reviews.Select(r => r.ToReviewDto());
 
-            return Ok(reviewsDto);
+            return Ok(new ApiResponse<IEnumerable<ReviewDto>>(reviewsDto, true, "Retrieved all reviews"));
 
         }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> getById([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var check = await _reviewRepo.GetByIdAsync(id);
             if (check == null)
-                return NotFound();
+                return StatusCode(404, new ApiResponse<int>(id, false, "Review with the given id does not exist"));
 
-            return Ok(check.ToReviewDto());
+            return Ok(new ApiResponse<ReviewDto>(check.ToReviewDto(), true, "Review found"));
         }
 
         [Authorize]
         [HttpPost]
         public async Task<IActionResult> createReview([FromBody] CreateReviewDto createReviewDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var manga = await _reviewRepo.MangaExists(createReviewDto.MangaId);
 
             if (manga == null)
             {
-                return BadRequest("Manga does not exist!");
+                return BadRequest(new ApiResponse<CreateReviewDto>(createReviewDto, false, "Selected Manga does not exist"));
             }
+
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-
 
             if (userId == null)
             {
-                return BadRequest("User does not exist!");
+                return BadRequest(new ApiResponse<string>(userId, false, "User with the given id does not exist"));
             }
 
             var review = await _reviewRepo.CreateAsync(createReviewDto.ToCreateFromDto(userId, manga));
 
             if (review == null)
             {
-                return BadRequest("Manga is already rated by user!");
+                return BadRequest(new ApiResponse<CreateReviewDto>(createReviewDto, false, "Review already rated by user"));
             }
 
             await _reviewRepo.CreateAsync(review);
             await _reviewRepo.UpdateAvgRating(review.MangaId);
 
 
-            return CreatedAtAction(nameof(getById), new { id = review.Id }, review.ToReviewDto());
+            return StatusCode(201, new ApiResponse<ReviewDto>(review.ToReviewDto(), true, "Review created successfully"));
         }
         [Authorize]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> updateReview([FromRoute] int id, [FromBody] UpdateReviewDto updateReviewDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var update = await _reviewRepo.UpdateAsync(id, updateReviewDto);
 
             if (update == null)
             {
-                return NotFound();
+                return StatusCode(404, new ApiResponse<int>(id, false, "Review with the given id does not exist"));
             }
 
             await _reviewRepo.UpdateAvgRating(update.MangaId);
-            return Ok(update.ToReviewDto());
+            return Ok(new ApiResponse<ReviewDto>(update.ToReviewDto(), true, "Review updated successfully"));
 
 
         }
@@ -105,17 +92,14 @@ namespace vaporAPI.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> deleteReview([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
             var delete = await _reviewRepo.DeleteAsync(id);
 
             if (delete == null)
             {
-                return NotFound();
+                return StatusCode(404, new ApiResponse<int>(id, false, "Review with the given id does not exist"));
             }
             await _reviewRepo.UpdateAvgRating(delete.MangaId);
-            return NoContent();
+            return StatusCode(204, new ApiResponse<ReviewDto>(delete.ToReviewDto(), true, "Review deleted successfully"));
 
         }
 
