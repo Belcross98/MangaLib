@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using vaporAPI.Data;
-using vaporAPI.Dtos.Manga;
 using vaporAPI.Helpers;
 using vaporAPI.Interfaces.Repository;
 using vaporAPI.Models;
@@ -22,26 +17,17 @@ namespace vaporAPI.Repository
 
         public async Task<Manga?> CreateAsync(Manga manga)
         {
-            var check = await _context.Mangas.FirstOrDefaultAsync(m => m.Name == manga.Name);
-
-            if (check != null)
-                return null;
-
             await _context.AddAsync(manga);
             await _context.SaveChangesAsync();
             return manga;
         }
 
-        public async Task<Manga?> DeleteAsync(int id)
+
+        public async Task<Manga?> DeleteAsync(Manga manga)
         {
-            var toBeDeleted = await _context.Mangas.FindAsync(id);
-
-            if (toBeDeleted == null)
-                return null;
-
-            _context.Mangas.Remove(toBeDeleted);
+            _context.Mangas.Remove(manga);
             await _context.SaveChangesAsync();
-            return toBeDeleted;
+            return manga;
         }
 
         public async Task<List<Manga>> GetAllAsync(QueryObject queryObject)
@@ -72,23 +58,17 @@ namespace vaporAPI.Repository
         {
             return await _context.Mangas.Include(r => r.Reviews).ThenInclude(r => r.User).FirstOrDefaultAsync(m => m.Id == id);
         }
-        public async Task<Manga?> UpdateAsync(int id, UpdateMangaDto? mangaDto)
+
+        public async Task<Manga?> MangaNameExists(string name)
         {
-            var check = await _context.Mangas.FindAsync(id);
+            return await _context.Mangas.FirstOrDefaultAsync(m => m.Name.Equals(name));
 
-            if (check == null)
-                return null;
-
-            if (mangaDto != null)
-            {
-                check.Name = string.IsNullOrEmpty(mangaDto.Name) ? check.Name : mangaDto.Name;
-                check.Description = string.IsNullOrEmpty(mangaDto.Description) ? check.Description : mangaDto.Description;
-                check.MangaPictureURL = string.IsNullOrEmpty(mangaDto.MangaPictureURL) ? check.MangaPictureURL : mangaDto.MangaPictureURL; ;
-            }
-
-
-            await _context.SaveChangesAsync();
-            return check;
         }
+
+        public async Task UpdateAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

@@ -14,8 +14,9 @@ namespace vaporAPI.Interfaces.Repository
         Task<List<Manga>> GetAllAsync(QueryObject queryObject);
         Task<Manga?> GetByIdAsync(int id);
         Task<Manga?> CreateAsync(Manga manga);
-        Task<Manga?> UpdateAsync(int id, UpdateMangaDto? mangaDto);
-        Task<Manga?> DeleteAsync(int id);
+        Task UpdateAsync();
+        Task<Manga?> DeleteAsync(Manga manga);
+        Task<Manga?> MangaNameExists(string name);
 
     }
 }

@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,13 +30,13 @@ namespace vaporAPI.Controllers
 
             if (user == null)
             {
-                return Unauthorized(new ApiResponse<LoginDto>(loginDto, false, "Invalid username"));
+                return Unauthorized(new ApiResponse<LoginDto>(loginDto, false, "Invalid username", HttpStatusCode.Unauthorized));
             }
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
             if (!result.Succeeded)
             {
-                return Unauthorized(new ApiResponse<LoginDto>(loginDto, false, "Invalid password"));
+                return Unauthorized(new ApiResponse<LoginDto>(loginDto, false, "Invalid password", HttpStatusCode.Unauthorized));
             }
             return Ok(
                 new ApiResponse<NewUserDto>(new NewUserDto
@@ -44,7 +45,7 @@ namespace vaporAPI.Controllers
                     Username = user.UserName,
                     Email = user.Email,
                     Tokens = _tokenService.CreateToken(user)
-                }, true, "User logged in successfully")
+                }, true, "User logged in successfully", HttpStatusCode.OK)
             );
         }
         [HttpPost("register")]
@@ -72,25 +73,25 @@ namespace vaporAPI.Controllers
                                 Email = user.Email,
                                 Tokens = _tokenService.CreateToken(user)
 
-                            }, true, "User registered successfully")
+                            }, true, "User registered successfully", HttpStatusCode.Created)
 
                         );
                     }
                     else
                     {
                         string error = roleResult.Errors.Select(e => e.Description).First();
-                        return StatusCode(500, new ApiResponse<RegisterDto>(registerDto, false, error));
+                        return StatusCode(500, new ApiResponse<RegisterDto>(registerDto, false, error, HttpStatusCode.InternalServerError));
                     }
                 }
                 else
                 {
                     string error = createdUser.Errors.Select(e => e.Description).First();
-                    return StatusCode(500, new ApiResponse<RegisterDto>(registerDto, false, error));
+                    return StatusCode(500, new ApiResponse<RegisterDto>(registerDto, false, error, HttpStatusCode.InternalServerError));
                 }
             }
             catch (Exception e)
             {
-                return StatusCode(500, new ApiResponse<Exception>(e, false, e.Message));
+                return StatusCode(500, new ApiResponse<Exception>(e, false, e.Message, HttpStatusCode.InternalServerError));
             }
         }
     }

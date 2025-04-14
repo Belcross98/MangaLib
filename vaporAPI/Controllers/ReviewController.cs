@@ -1,3 +1,4 @@
+using System.Net;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@ namespace vaporAPI.Controllers
             var reviews = await _reviewRepo.GetAllAsync();
             var reviewsDto = reviews.Select(r => r.ToReviewDto());
 
-            return Ok(new ApiResponse<IEnumerable<ReviewDto>>(reviewsDto, true, "Retrieved all reviews"));
+            return Ok(new ApiResponse<IEnumerable<ReviewDto>>(reviewsDto, true, "Retrieved all reviews", HttpStatusCode.OK));
 
         }
 
@@ -36,9 +37,9 @@ namespace vaporAPI.Controllers
         {
             var check = await _reviewRepo.GetByIdAsync(id);
             if (check == null)
-                return StatusCode(404, new ApiResponse<int>(id, false, "Review with the given id does not exist"));
+                return StatusCode(404, new ApiResponse<int>(id, false, "Review with the given id does not exist", HttpStatusCode.NotFound));
 
-            return Ok(new ApiResponse<ReviewDto>(check.ToReviewDto(), true, "Review found"));
+            return Ok(new ApiResponse<ReviewDto>(check.ToReviewDto(), true, "Review found", HttpStatusCode.OK));
         }
 
         [Authorize]
@@ -49,28 +50,28 @@ namespace vaporAPI.Controllers
 
             if (manga == null)
             {
-                return BadRequest(new ApiResponse<CreateReviewDto>(createReviewDto, false, "Selected Manga does not exist"));
+                return BadRequest(new ApiResponse<CreateReviewDto>(createReviewDto, false, "Selected Manga does not exist", HttpStatusCode.BadRequest));
             }
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (userId == null)
             {
-                return BadRequest(new ApiResponse<string>(userId, false, "User with the given id does not exist"));
+                return BadRequest(new ApiResponse<string>(userId, false, "User with the given id does not exist", HttpStatusCode.BadRequest));
             }
 
             var review = await _reviewRepo.CreateAsync(createReviewDto.ToCreateFromDto(userId, manga));
 
             if (review == null)
             {
-                return BadRequest(new ApiResponse<CreateReviewDto>(createReviewDto, false, "Review already rated by user"));
+                return BadRequest(new ApiResponse<CreateReviewDto>(createReviewDto, false, "Review already rated by user", HttpStatusCode.BadRequest));
             }
 
             await _reviewRepo.CreateAsync(review);
             await _reviewRepo.UpdateAvgRating(review.MangaId);
 
 
-            return StatusCode(201, new ApiResponse<ReviewDto>(review.ToReviewDto(), true, "Review created successfully"));
+            return StatusCode(201, new ApiResponse<ReviewDto>(review.ToReviewDto(), true, "Review created successfully", HttpStatusCode.Created));
         }
         [Authorize]
         [HttpPut("{id:int}")]
@@ -80,11 +81,11 @@ namespace vaporAPI.Controllers
 
             if (update == null)
             {
-                return StatusCode(404, new ApiResponse<int>(id, false, "Review with the given id does not exist"));
+                return StatusCode(404, new ApiResponse<int>(id, false, "Review with the given id does not exist", HttpStatusCode.NotFound));
             }
 
             await _reviewRepo.UpdateAvgRating(update.MangaId);
-            return Ok(new ApiResponse<ReviewDto>(update.ToReviewDto(), true, "Review updated successfully"));
+            return Ok(new ApiResponse<ReviewDto>(update.ToReviewDto(), true, "Review updated successfully", HttpStatusCode.OK));
 
 
         }
@@ -96,10 +97,10 @@ namespace vaporAPI.Controllers
 
             if (delete == null)
             {
-                return StatusCode(404, new ApiResponse<int>(id, false, "Review with the given id does not exist"));
+                return StatusCode(404, new ApiResponse<int>(id, false, "Review with the given id does not exist", HttpStatusCode.NotFound));
             }
             await _reviewRepo.UpdateAvgRating(delete.MangaId);
-            return StatusCode(204, new ApiResponse<ReviewDto>(delete.ToReviewDto(), true, "Review deleted successfully"));
+            return StatusCode(204, new ApiResponse<ReviewDto>(delete.ToReviewDto(), true, "Review deleted successfully", HttpStatusCode.NoContent));
 
         }
 

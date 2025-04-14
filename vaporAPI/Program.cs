@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -78,7 +79,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
             .Select(e => e.ErrorMessage)
             .ToList();
 
-        var result = new BadRequestObjectResult(new ApiResponse<Object>(null, false, errors.First()));
+        var result = new BadRequestObjectResult(new ApiResponse<Object>(null, false, errors.First(), HttpStatusCode.BadRequest));
 
         return result;
     };
@@ -100,6 +101,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IMangaRepository, MangaRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<IMangaService, MangaService>();
 
 
 var app = builder.Build();
