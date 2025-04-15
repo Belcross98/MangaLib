@@ -29,9 +29,9 @@ namespace vaporAPI.Service
                 return new ApiResponse<ReviewDto>(null, false, "Manga with the given id does not exist", HttpStatusCode.NotFound);
 
             var review = createReviewDto.ToCreateFromDto(userId, manga);
-            var existingReview = manga.Reviews.Select(r => r.UserId).Contains(userId);
+            var existingReview = manga.Reviews.FirstOrDefault(r => r.UserId == userId);
 
-            if (existingReview)
+            if (existingReview != null)
                 return new ApiResponse<ReviewDto>(null, false, "You have already reviewed this manga", HttpStatusCode.Conflict);
 
             manga.Reviews.Add(review);
@@ -42,21 +42,18 @@ namespace vaporAPI.Service
             return new ApiResponse<ReviewDto>(review.ToReviewDto(), true, "Review created successfully", HttpStatusCode.OK);
         }
 
-        public async Task<ApiResponse<ReviewDto>> DeleteReviewAsync(int id, string userId)
+        public async Task<ApiResponse<ReviewDto>> DeleteReviewAsync(int mangaId, string userId)
         {
             if (userId == null)
                 return new ApiResponse<ReviewDto>(null, false, "User with the given id does not exist", HttpStatusCode.NotFound);
 
-            var review = await _reviewRepo.GetByIdAsync(id);
-            if (review == null)
-                return new ApiResponse<ReviewDto>(null, false, "Review with the given id does not exist", HttpStatusCode.NotFound);
-
-            if (review.UserId != userId)
-                return new ApiResponse<ReviewDto>(null, false, "You are not authorized to delete this review", HttpStatusCode.Unauthorized);
-
-            var manga = await _reviewRepo.MangaExists(review.MangaId);
+            var manga = await _reviewRepo.MangaExists(mangaId);
             if (manga == null)
                 return new ApiResponse<ReviewDto>(null, false, "Manga with the given id does not exist", HttpStatusCode.NotFound);
+
+            var review = manga.Reviews.FirstOrDefault(r => r.UserId == userId);
+            if (review == null)
+                return new ApiResponse<ReviewDto>(null, false, "User hasn't rated this manga", HttpStatusCode.NotFound);
 
             manga.Reviews.Remove(review);
             manga.AverageRating = manga.Reviews.Count > 0 ? (decimal?)manga.Reviews.Average(r => r.Rating) : 0;
