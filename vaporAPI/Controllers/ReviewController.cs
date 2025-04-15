@@ -22,7 +22,7 @@ namespace vaporAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> getAllReviews()
+        public async Task<IActionResult> GetAllReviews()
         {
             try
             {
@@ -38,7 +38,7 @@ namespace vaporAPI.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> getById([FromRoute] int id)
+        public async Task<IActionResult> GetById([FromRoute] int id)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace vaporAPI.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> createReview([FromBody] CreateReviewDto createReviewDto)
+        public async Task<IActionResult> CreateReview([FromBody] CreateReviewDto createReviewDto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             try
@@ -73,11 +73,12 @@ namespace vaporAPI.Controllers
 
         [Authorize]
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> deleteReview([FromRoute] int id)
+        public async Task<IActionResult> DeleteReview([FromRoute] int id)
         {
             try
             {
-                var response = await _reviewService.DeleteReviewAsync(id);
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var response = await _reviewService.DeleteReviewAsync(id, userId);
                 return StatusCode(response.StatusCode, response);
             }
             catch (Exception e)
