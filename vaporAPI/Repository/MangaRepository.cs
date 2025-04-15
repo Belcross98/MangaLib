@@ -61,7 +61,7 @@ namespace vaporAPI.Repository
 
         public async Task<Manga?> MangaNameExists(string name)
         {
-            return await _context.Mangas.FirstOrDefaultAsync(m => m.Name.Equals(name));
+            return await _context.Mangas.FirstOrDefaultAsync(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
         }
 

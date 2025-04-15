@@ -19,14 +19,14 @@ namespace vaporAPI.Service
 
         public async Task<ApiResponse<MangaDto>> CreateMangaAsync(CreateMangaDto createMangaDto)
         {
-            var mangaToBeAdded = createMangaDto.ToCreateFromDto();
-            var check = await _mangaRepository.MangaNameExists(mangaToBeAdded.Name);
+            var check = await _mangaRepository.MangaNameExists(createMangaDto.Name);
             if (check != null)
-                return new ApiResponse<MangaDto>(mangaToBeAdded.ToMangaDto(), false, "Manga with that name already exists", HttpStatusCode.BadRequest);
+                return new ApiResponse<MangaDto>(check.ToMangaDto(), false, "Manga with that name already exists", HttpStatusCode.BadRequest);
+
+            var mangaToBeAdded = createMangaDto.ToCreateFromDto();
+
             await _mangaRepository.CreateAsync(mangaToBeAdded);
             return new ApiResponse<MangaDto>(mangaToBeAdded.ToMangaDto(), true, "Manga created successfully", HttpStatusCode.Created);
-
-
         }
 
         public async Task<ApiResponse<MangaDto>> DeleteMangaAsync(int id)

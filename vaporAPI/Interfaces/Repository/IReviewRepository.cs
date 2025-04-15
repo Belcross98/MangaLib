@@ -12,10 +12,10 @@ namespace vaporAPI.Interfaces.Repository
         Task<List<Review>> GetAllAsync();
         Task<Review?> GetByIdAsync(int id);
         Task<Review?> CreateAsync(Review review);
-        Task<Review?> UpdateAsync(int id, UpdateReviewDto updateReviewDto);
-        Task<Review?> DeleteAsync(int id);
+        Task<Review?> DeleteAsync(Review review);
         Task<Manga?> MangaExists(int id);
         Task<User?> UserExists(string id);
-        Task UpdateAvgRating(int mangaId);
+        Task UpdateAsync();
+
     }
 }

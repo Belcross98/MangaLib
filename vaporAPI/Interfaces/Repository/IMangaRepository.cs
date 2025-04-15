@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore.Update.Internal;
-using vaporAPI.Dtos.Manga;
 using vaporAPI.Helpers;
 using vaporAPI.Models;
 
