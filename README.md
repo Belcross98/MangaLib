@@ -1,6 +1,6 @@
-# 📚 MangaLib API
+# 📚 Vapor API
 
-MangaLib is a RESTful API built with ASP.NET Core that allows users to explore, review, and manage manga. It supports user authentication, manga listing and rating functionality for now as it is still work in progress.
+Vapor API is a backend service built with ASP.NET Core, providing RESTful endpoints for exploring, reviewing, and managing manga content.
 
 ---
 
