@@ -61,7 +61,11 @@ namespace vaporAPI.Repository
 
         public async Task<Manga?> MangaNameExists(string name)
         {
-            return await _context.Mangas.FirstOrDefaultAsync(m => m.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            if (string.IsNullOrWhiteSpace(name))
+                return null;
+
+            var normalized = name.ToUpper();
+            return await _context.Mangas.FirstOrDefaultAsync(m => m.Name.ToUpper() == normalized);
 
         }
 
