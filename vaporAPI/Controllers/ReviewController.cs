@@ -56,7 +56,7 @@ namespace vaporAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateReview([FromBody] CreateReviewDto createReviewDto)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("Invalid userId");
             try
             {
                 var response = await _reviewService.CreateReviewAsync(createReviewDto, userId);
@@ -77,7 +77,7 @@ namespace vaporAPI.Controllers
         {
             try
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("Invalid userId");
                 var response = await _reviewService.DeleteReviewAsync(id, userId);
                 return StatusCode(response.StatusCode, response);
             }

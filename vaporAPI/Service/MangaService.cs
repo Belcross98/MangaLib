@@ -37,7 +37,7 @@ namespace vaporAPI.Service
                 return new ApiResponse<MangaDto>(null, false, "Manga not found", HttpStatusCode.NotFound);
 
             var deletedManga = await _mangaRepository.DeleteAsync(manga);
-            return new ApiResponse<MangaDto>(deletedManga.ToMangaDto(), true, "Manga deleted successfully", HttpStatusCode.OK);
+            return new ApiResponse<MangaDto>(deletedManga!.ToMangaDto(), true, "Manga deleted successfully", HttpStatusCode.OK);
         }
 
         public async Task<ApiResponse<MangaDto>> GetMangaByIdAsync(int id)
@@ -54,6 +54,7 @@ namespace vaporAPI.Service
             var mangasDto = mangas.Select(s => s.ToMangaDto()).ToList();
             return new ApiResponse<List<MangaDto>>(mangasDto, true, "Retrieved all mangas", HttpStatusCode.OK);
         }
+
 
         public async Task<ApiResponse<MangaDto>> UpdateMangaAsync(int id, UpdateMangaDto updateMangaDto)
         {

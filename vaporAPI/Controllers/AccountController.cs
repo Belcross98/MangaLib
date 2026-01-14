@@ -1,7 +1,6 @@
 using System.Net;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using vaporAPI.Dtos.Account;
 using vaporAPI.Helpers;
 using vaporAPI.Interfaces.Service;
@@ -26,12 +25,13 @@ namespace vaporAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            var user = await _userMangager.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
+            var user = await _userMangager.FindByNameAsync(loginDto.Username);
 
             if (user == null)
             {
                 return Unauthorized(new ApiResponse<LoginDto>(loginDto, false, "Invalid username", HttpStatusCode.Unauthorized));
             }
+
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
             if (!result.Succeeded)
@@ -42,9 +42,9 @@ namespace vaporAPI.Controllers
                 new ApiResponse<NewUserDto>(new NewUserDto
                 {
 
-                    Username = user.UserName,
-                    Email = user.Email,
-                    Tokens = _tokenService.CreateToken(user)
+                    Username = user.UserName!,
+                    Email = user.Email!,
+                    Tokens = await _tokenService.CreateToken(user)
                 }, true, "User logged in successfully", HttpStatusCode.OK)
             );
         }
@@ -58,7 +58,7 @@ namespace vaporAPI.Controllers
                     UserName = registerDto.Username,
                     Email = registerDto.Email
                 };
-                var createdUser = await _userMangager.CreateAsync(user, registerDto.Password);
+                var createdUser = await _userMangager.CreateAsync(user, registerDto.Password!);
 
                 if (createdUser.Succeeded)
                 {
@@ -69,9 +69,9 @@ namespace vaporAPI.Controllers
                         return Ok(new ApiResponse<NewUserDto>(
                             new NewUserDto
                             {
-                                Username = user.UserName,
-                                Email = user.Email,
-                                Tokens = _tokenService.CreateToken(user)
+                                Username = user.UserName!,
+                                Email = user.Email!,
+                                Tokens = await _tokenService.CreateToken(user)
 
                             }, true, "User registered successfully", HttpStatusCode.Created)
 
@@ -94,5 +94,23 @@ namespace vaporAPI.Controllers
                 return StatusCode(500, new ApiResponse<Exception>(e, false, e.Message, HttpStatusCode.InternalServerError));
             }
         }
+
+        // [HttpPost("make-admin")]
+        // public async Task<IActionResult> MakeAdmin()
+        // {
+
+        //     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        //     if (userId == null) return Unauthorized();
+
+        //     var user = await _userMangager.FindByIdAsync(userId);
+
+        //     if (user == null) return NotFound();
+
+        //     await _userMangager.AddToRoleAsync(user, "Admin");
+
+        //     return Ok();
+        // }
+
     }
 }

@@ -4,7 +4,6 @@ using vaporAPI.Helpers;
 using vaporAPI.Interfaces.Repository;
 using vaporAPI.Interfaces.Service;
 using vaporAPI.Mappers;
-using vaporAPI.Models;
 
 namespace vaporAPI.Service
 {
