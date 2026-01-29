@@ -36,7 +36,7 @@ namespace vaporAPI.Repository
 
             if (!string.IsNullOrWhiteSpace(queryObject.MangaName))
             {
-                mangas = mangas.Where(m => m.Name.Contains(queryObject.MangaName));
+                mangas = mangas.Where(m => m.Name.ToLower().Contains(queryObject.MangaName.ToLower())).Take(6);
             }
             if (!string.IsNullOrWhiteSpace(queryObject.SortBy))
             {
